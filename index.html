@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraQuest - 地理探索之旅</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/cobe"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #87CEEB, #4682B4);
+            min-height: 100vh;
+        }
+		
+		/* 导航栏样式 */
+		.navbar {
+		  display: flex;
+		  justify-content: space-between;
+		  align-items: center;
+		  background-color: #3C6585;
+		  padding: 10px 20px;
+		  color: white;
+		  position: fixed;
+		  top: 0;
+		  width: 100%;
+		  z-index: 1000;
+		}
+
+		.navbar .logo {
+		  font-size: 20px;
+		  font-weight: bold;
+		}
+		.nav-buttons{
+			padding-right:50px
+		}
+		.navbar .nav-buttons {
+		  display: flex;
+		  gap: 15px;
+		}
+
+		.navbar .nav-buttons a {
+		  color: white;
+		  text-decoration: none;
+		  padding: 5px 15px;
+		  background-color: #85ACCF;
+		  border-radius: 5px;
+		  transition: background-color 0.3s ease;
+		}
+
+		.navbar .nav-buttons a:hover {
+		  background-color: #6088A9;
+		}
+
+		/* 页面顶部留白以适应固定导航栏 */
+		.content {
+		  padding-top: 60px;
+		}
+
+
+
+
+        /* 导览页样式 */
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .globe-container {
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #globe-canvas {
+            width: min(100vh, 800px) !important;
+            height: min(100vh, 800px) !important;
+            max-width: 100%;
+            aspect-ratio: 1;
+        }
+
+        .hero-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            color: white;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .mascot-image {
+            width: 300px;
+            height: auto;
+            margin-bottom: 2rem;
+            animation: bounce 2s infinite;
+        }
+
+        /* AI对话区域样式优化 */
+        .ai-section {
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            min-height: 600px;
+        }
+
+        .tools-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .tool-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-container {
+            position: relative;
+            width: 80%;
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .chat-header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .chat-input-area {
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .chat-input-area button {
+            padding: 0.5rem 1.5rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .chat-input-area button:hover {
+            background: #2980b9;
+        }
+
+        /* 消息样式 */
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+
+        .user-message {
+            background: #3498db;
+            color: white;
+            margin-left: auto;
+        }
+
+        .bot-message {
+            background: #e9ecef;
+            color: #2c3e50;
+            margin-right: auto;
+        }
+
+        /* 交互地图区域 */
+        .map-section {
+            position: relative;
+        }
+
+        .interactive-map {
+            position: relative;
+            width: 50%;
+            margin: 0 auto;
+			max-width:100%
+        }
+
+        .map-image {
+            width: 100%;
+            height: auto;
+        }
+
+        .hotspot {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #3498db;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+        }
+
+     
+
+        /* AR预览图片样式优化 */
+        .ar-preview {
+            position: absolute;
+            display: none;
+            width: 300px;
+            height: 200px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .ar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .ar-preview:hover img {
+            transform: scale(1.05);
+        }
+
+        /* QR码区域 */
+        .qr-section {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .qr-container {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        /* 页脚样式 */
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 4rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h4 {
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 添加装饰元素样式 */
+        .hero-section {
+            position: relative;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('./sucai/clouds.png.png') repeat-x;
+            animation: cloudMove 30s linear infinite;
+            opacity: 0.6;
+        }
+
+        .compass-decoration {
+            position: absolute;
+            right: 2rem;
+            top: 2rem;
+            width: 100px;
+            height: 100px;
+            background: url('./sucai/compass.png') no-repeat center/contain;
+            animation: rotate 20s linear infinite;
+        }
+
+        .balloon-decoration {
+            position: absolute;
+            left: 2rem;
+            top: 15%;
+            width: 80px;
+            height: 120px;
+            background: url('./sucai/balloon.png.png') no-repeat center/contain;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes cloudMove {
+            from { background-position: 0 0; }
+            to { background-position: 100% 0; }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* 添加渐变遮罩 */
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.7) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+		#world-map {
+		  width: 100%;
+		  height: auto;
+		  border: 1px solid #ccc;
+		  background-color: #fff;
+		  display: block;
+		}
+		
+		.toggle-icon {
+		  position: absolute;
+		  top: 10px;
+		  right: 10px;
+		  width: 30px;
+		  height: 30px;
+		  background-color: rgba(0, 0, 0, 0.6);
+		  color: #fff;
+		  border-radius: 50%;
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		  cursor: pointer;
+		  font-size: 18px;
+		  line-height: 30px;
+		  user-select: none;
+		  transition: background-color 0.2s;
+		}
+
+		.tooltip {
+		  position: absolute;
+		  background-color: rgba(0, 0, 0, 0.8);
+		  color: #fff;
+		  padding: 10px;
+		  border-radius: 5px;
+		  font-size: 14px;
+		  max-width: 300px;
+		  display: none;
+		  z-index: 1000;
+		}
+
+		.tooltip b {
+		  font-weight: bold;
+		}
+
+		.interactive-element {
+		  cursor: pointer;
+		  display: inline-block;
+		  margin: 20px;
+		  padding: 10px;
+		  border-radius: 5px;
+		  transition: background-color 0.3s ease;
+		}
+		
+		.guide-header{
+			background: #3C6585;
+            color: white;
+            padding: 6rem;
+		}
+		.guide-box{
+			width:40%;
+			padding-left:30%
+		}
+		
+    </style>
+</head>
+<body>
+		<!-- 导航栏 -->
+	<div class="navbar">
+		<div class="logo">TerraQuest - 地理探索之旅</div>
+		<div class="nav-buttons">
+		  <a href="" class="game">游戏</a>
+		  <a href="#ai-dialog">知识对话</a>
+		  <a href="#ar-map">AR地图</a>
+		</div>
+	</div>
+    <!-- 导览页区域 -->
+    <section class="hero-section">
+        <div class="globe-container">
+            <canvas id="globe-canvas" 
+                class="opacity-0 transition-opacity duration-500"
+                style="width: 100%; height: 100%; cursor: grab;">
+            </canvas>
+        </div>
+        <div class="hero-content">
+            <img src="./sucai/kiki.png.png" alt="雪豹Kiki" class="mascot-image animate__animated animate__bounce">
+            <h1 style="font-size:40px">欢迎来到 TerraQuest</h1>
+            <p style="font-size:25px">与雪豹Kiki一起探索地理的奥秘</p>
+			<!-- 游戏区 -->
+			<div class ="interactive-element" id="game">
+				<img src="./sucai/exploration-icon.png.png" alt="游戏" class="tool-icon game" >
+			</div>
+			
+        </div>
+    </section>
+	
+    <!-- 第一块引导词区域 -->
+    <section class="section" id="ai-dialog">
+      <div class="guide-header">
+		<div class="guide-box">
+			<div style="font-size:25px;">有问题就问我吧！一起探索这个奇妙的地理世界！</div>
+			<div style="padding-top:10px">在这里，你可以和AI导览员KiKi聊一聊，从壮丽的自然景观到神秘的地理知识，她会为你解答所有疑惑！</div> 
+		</div>
+      </div>
+    </section>
+
+    <!-- AI对话区域 -->
+    <section class="ai-section" >
+        <div class="tools-container">
+            <img src="./sucai/backpack-icon.png.png" alt="背包" class="tool-icon">
+            <img src="./sucai/magnifier-icon.png.png" alt="放大镜" class="tool-icon">
+            <img src="./sucai/journal-icon.png.png" alt="探险日记" class="tool-icon">
+        </div>
+        <div class="chat-container">
+            <div class="chat-header">
+                <h3>快来和Kiki一起探索地球的奥秘吧！</h3>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- 初始欢迎消息 -->
+                <div class="message bot-message">
+                    你好！我是Kiki，让我们一起开始地理探索之旅吧！
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="messageInput" placeholder="问问Kiki关于地理的问题...">
+                <button onclick="sendMessage()">发送</button>
+            </div>
+        </div>
+    </section>
+	
+	    <!-- 第二块引导词区域 -->
+    <section class="section" id="ar-map">
+		<div class="guide-header">
+		<div class="guide-box">
+			<div style="font-size:25px;">快来解锁地图上的十个地理小秘密!</div>
+			<div style="padding-top:10px">地图上藏着十个奇特有趣的地理奇观，等着你去发现哦！扫一扫下方的微信二维码，根据引导就能看到这些奇特又可爱的立体模型，还能收获有趣的地理知识！赶紧试试吧，地球的精彩在等你！</div> 
+		</div>
+      </div>
+    </section>
+
+    <!-- 交互地图区域 -->
+    <section class="map-section">
+		<div class="interactive-map" id="world-map">
+			<img src="./sucai/map.png.png" alt="世界地图" class="map-image" >
+			<!-- AR预览 -->
+			<div class="ar-preview">
+				<img src="" alt="AR场景">
+			</div>
+		</div>
+		<div class="toggle-icon" id="toggle-size">＋</div>
+    </section>
+
+    <!-- 二维码区域 -->
+    <section class="qr-section">
+        <h2>扫描微信二维码体验AR互动</h2>
+        <div class="qr-container" >
+            <!-- 预留二维码位置 -->
+			<img src="./sucai/qrcode.png" style="width:200px;height:200px"  alt="二维码">
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>关于我们</h4>
+                <ul>
+                    <li><a href="#">项目介绍</a></li>
+                    <li><a href="#">团队成员</a></li>
+                    <li><a href="#">联系方式</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>探索更多</h4>
+                <ul>
+                    <li><a href="#">地理知识</a></li>
+                    <li><a href="#">AR体验</a></li>
+                    <li><a href="#">互动游戏</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>帮助支持</h4>
+                <ul>
+                    <li><a href="#">使用指南</a></li>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">常见反馈</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 TerraQuest. All Rights Reserved.</p>
+        </div>
+    </footer>
+	<div class="tooltip" id="tooltip"></div>
+    <!-- 交互脚本 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.5.27/jsrsasign-all-min.js"></script>
+    <script>
+		// Tooltip data
+		const tooltipData = {
+		  game: `<b>探索生命的奇迹，发现地理的奥秘！</b><br>
+				 通过这段小小的互动旅程，感受地球的美丽与多样性，开启一场与自然交融的奇妙体验吧！`,
+		  "ai-dialog": `<b>有问题就问我吧！一起探索这个奇妙的地理世界！</b><br>
+						在这里，你可以和AI导览员KiKi聊一聊，从壮丽的自然景观到神秘的地理知识，她会为你解答所有疑惑！`,
+		  "ar-map": `<b>快来解锁地图上的十个地理小秘密!</b><br>
+					 地图上藏着十个奇特有趣的地理奇观，等着你去发现哦！<br>
+					 扫一扫下方的微信二维码，根据引导就能看到这些奇特又可爱的立体模型，还能收获有趣的地理知识！赶紧试试吧，地球的精彩在等你！`
+		};
+
+		const tooltip = document.getElementById('tooltip');
+
+		// Show tooltip
+		function showTooltip(event, content) {
+		  tooltip.innerHTML = content;
+		  tooltip.style.display = 'block';
+		  tooltip.style.left = event.pageX + 10 + 'px';
+		  tooltip.style.top = event.pageY + 10 + 'px';
+		}
+
+		// Hide tooltip
+		function hideTooltip() {
+		  tooltip.style.display = 'none';
+		}
+
+		// Attach events
+		document.querySelectorAll('.interactive-element').forEach(element => {
+		  const id = element.getAttribute('id');
+		  if (tooltipData[id]) {
+			element.addEventListener('mouseover', (event) => showTooltip(event, tooltipData[id]));
+			element.addEventListener('mousemove', (event) => {
+			  tooltip.style.left = event.pageX + 10 + 'px';
+			  tooltip.style.top = event.pageY + 10 + 'px';
+			});
+			element.addEventListener('mouseout', hideTooltip);
+		  }
+		});
+	
+	
+		// 获取相关的 DOM 元素
+		const worldMapContainer = document.getElementById('world-map');
+		const toggleIcon = document.getElementById('toggle-size');
+
+		// 默认状态：是否为放大状态
+		let isExpanded = true;
+
+		// 切换大小的事件监听
+		toggleIcon.addEventListener('click', () => {
+		  if (isExpanded) {
+			// 如果是放大状态，改为缩小
+			worldMapContainer.style.width = '50%';
+			toggleIcon.textContent = '＋'; // 图标改为放大
+		  } else {
+			// 如果是缩小状态，改为放大
+			worldMapContainer.style.width = '100%';
+			toggleIcon.textContent = '－'; // 图标改为缩小
+		  }
+
+		  // 切换状态
+		  isExpanded = !isExpanded;
+		});
+	
+	
+	
+		// 获取地图图片元素
+		const worldMap = document.getElementById('world-map');
+
+		// 设置初始宽度为 50%
+		let currentWidth = 50;
+
+		// 添加鼠标滚轮事件监听器
+		worldMap.addEventListener('wheel', (event) => {
+			// 阻止默认滚动行为
+			event.preventDefault();
+
+			// 根据滚轮方向调整宽度（向上放大，向下缩小）
+			if (event.deltaY < 0) {
+				currentWidth += 5; // 放大
+			} else {
+				currentWidth -= 5; // 缩小
+			}
+
+			// 限制宽度范围在 50% 到 100% 之间
+			if (currentWidth > 100) {
+				currentWidth = 100;
+				toggleIcon.textContent = '－';
+				isExpanded = true;
+				
+			} else if (currentWidth < 50) {
+				currentWidth = 50;
+				toggleIcon.textContent = '＋';
+				isExpanded = false
+			}
+
+			// 设置新的宽度
+			worldMap.style.width = `${currentWidth}%`;
+		});
+	
+	
+	
+		const buttons = document.querySelectorAll('.game');
+
+		// 为每个按钮绑定点击事件
+		buttons.forEach((button) => {
+		  button.addEventListener('click', (event) => {
+			// 本地游戏路径
+			var localPagePath = './daolan/index.html';
+			// 打开新页面
+			window.open(localPagePath, '_blank');
+		  });
+		});
+
+	
+        // 生成JWT Token的函数
+        function generateToken(apiKey) {
+            const [id, secret] = apiKey.split('.');
+            const now = Date.now();
+            const header = {
+                alg: 'HS256',
+                sign_type: 'SIGN'
+            };
+            const payload = {
+                api_key: id,
+                exp: now + 3600000, // 1小时后过期
+                timestamp: now
+            };
+            
+            const sHeader = JSON.stringify(header);
+            const sPayload = JSON.stringify(payload);
+            const sJWT = KJUR.jws.JWS.sign("HS256", sHeader, sPayload, secret);
+            return sJWT;
+        }
+
+        // 发送消息到智谱AI
+        async function sendToAI(message) {
+            const API_KEY = 'abb11342adc3fb43632df21d49288c8a.AsPLcv6ofVr9gO08';
+            const token = generateToken(API_KEY);
+            
+            try {
+                const response = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'glm-4',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: '你是一个名叫Kiki的雪豹，是一位充满活力和知识的地理向导。你要用友好、活泼的语气与用户交流，帮助他们了解地理知识。'
+                            },
+                            {
+                                role: 'user',
+                                content: message
+                            }
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error('AI响应错误:', error);
+                return '抱歉，我现在有点忙，请稍后再试！';
+            }
+        }
+
+        // 修改发送消息函数
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            if (input.value.trim() !== '') {
+                // 添加用户消息
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user-message';
+                userMessage.textContent = input.value;
+                messagesContainer.appendChild(userMessage);
+
+                // 显示加载状态
+                const loadingMessage = document.createElement('div');
+                loadingMessage.className = 'message bot-message';
+                loadingMessage.textContent = '思考中...';
+                messagesContainer.appendChild(loadingMessage);
+
+                try {
+                    // 获取AI响应
+                    const aiResponse = await sendToAI(input.value);
+                    
+                    // 替换加载消息为AI响应
+                    loadingMessage.textContent = aiResponse;
+                } catch (error) {
+                    loadingMessage.textContent = '抱歉，我遇到了一些问题，请稍后再试！';
+                }
+
+                // 清空输入框并滚动到底部
+                input.value = '';
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        }
+
+        // 添加回车发送功能
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // 地图热点交互
+        document.querySelectorAll('.hotspot').forEach(hotspot => {
+            hotspot.addEventListener('mouseenter', function(e) {
+                const preview = document.querySelector('.ar-preview');
+                const previewImg = preview.querySelector('img');
+                previewImg.src = this.dataset.image;
+                
+                preview.style.display = 'block';
+                
+                // 计算预览框的位置
+                const rect = this.getBoundingClientRect();
+                const previewRect = preview.getBoundingClientRect();
+                
+                let left = rect.left + window.scrollX;
+                let top = rect.top + window.scrollY - previewRect.height - 20;
+                
+                // 确保预览框在视口内
+                if (top < 0) {
+                    top = rect.bottom + window.scrollY + 20;
+                }
+                
+                preview.style.left = `${left}px`;
+                preview.style.top = `${top}px`;
+            });
+
+            hotspot.addEventListener('mouseleave', function() {
+                document.querySelector('.ar-preview').style.display = 'none';
+            });
+        });
+
+        function initGlobe() {
+            const canvas = document.getElementById('globe-canvas');
+            let phi = 0;
+            let width = 0;
+            
+            const GLOBE_CONFIG = {
+                width: 800,
+                height: 800,
+                devicePixelRatio: 2,
+                phi: 0,
+                theta: 0.3,
+                dark: 0,
+                diffuse: 1.2,
+                mapSamples: 16000,
+                mapBrightness: 6,
+                baseColor: [0.3, 0.3, 0.3],
+                markerColor: [251 / 255, 100 / 255, 21 / 255],
+                glowColor: [0.8, 0.8, 0.8],
+                scale: 1.2,
+                markers: [
+                    // 添加一些主要城市的标记
+                    { location: [39.9042, 116.4074], size: 0.08 }, // 北京
+                    { location: [31.2304, 121.4737], size: 0.06 }, // 上海
+                    { location: [22.5431, 114.0579], size: 0.05 }, // 深圳
+                    { location: [40.7128, -74.006], size: 0.07 },  // 纽约
+                    { location: [51.5074, -0.1278], size: 0.06 },  // 伦敦
+                    { location: [35.6762, 139.6503], size: 0.05 }, // 东京
+                ],
+            };
+
+            let pointerInteracting = null;
+            let pointerInteractionMovement = 0;
+            let rotation = 0;
+
+            function updatePointerInteraction(clientX) {
+                pointerInteracting = clientX;
+                canvas.style.cursor = 'grabbing';
+            }
+
+            function updateMovement(clientX) {
+                if (pointerInteracting !== null) {
+                    const delta = clientX - pointerInteracting;
+                    pointerInteractionMovement = delta;
+                    rotation = delta / 200;
+                }
+            }
+
+            canvas.addEventListener('pointerdown', (e) => {
+                updatePointerInteraction(e.clientX - pointerInteractionMovement);
+            });
+
+            canvas.addEventListener('pointermove', (e) => {
+                updateMovement(e.clientX);
+            });
+
+            canvas.addEventListener('pointerup', () => {
+                pointerInteracting = null;
+                canvas.style.cursor = 'grab';
+            });
+
+            canvas.addEventListener('pointerout', () => {
+                pointerInteracting = null;
+                canvas.style.cursor = 'grab';
+            });
+
+            let currentWidth = canvas.offsetWidth;
+            
+            const globe = createGlobe(canvas, {
+                ...GLOBE_CONFIG,
+                width: canvas.width * 2,
+                height: canvas.height * 2,
+                onRender: (state) => {
+                    state.phi = phi + rotation;
+                    phi += 0.003;
+                    state.width = canvas.width * 2;
+                    state.height = canvas.height * 2;
+                }
+            });
+
+            // 添加窗口大小变化响应
+            window.addEventListener('resize', () => {
+                currentWidth = canvas.offsetWidth;
+            });
+
+            // 立即显示地球
+            canvas.style.opacity = '1';
+        }
+
+        // 确保在DOM完全加载后初始化地球
+        document.addEventListener('DOMContentLoaded', initGlobe);
+    </script>
+</body>
+</html> 

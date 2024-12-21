@@ -1,0 +1,111 @@
+.navbar {
+  background: linear-gradient(135deg, #70c7d3 0%, #4a90e2 100%);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.logoLink:hover {
+  transform: scale(1.05);
+}
+
+.logoImage {
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  transition: transform 0.5s ease;
+}
+
+.logo:hover .logoImage {
+  transform: rotate(360deg);
+}
+
+.logoText {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.navLinks {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.navLink {
+  color: white;
+  text-decoration: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.navLink::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.navLink:hover::before {
+  transform: translateX(0);
+}
+
+.navLink:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .navLinks {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+
+  .navLink {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .logoText {
+    font-size: 1.2rem;
+  }
+} 

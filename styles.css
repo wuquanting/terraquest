@@ -1,0 +1,1403 @@
+/* 全局样式 */
+:root {
+    --primary-color: #4BA3E3;
+    --secondary-color: #FFB6C1;
+    --accent-color: #F5A623;
+    --text-dark: #2C3E50;
+    --text-light: #FFFFFF;
+    --gradient-start: #4BA3E3;
+    --gradient-middle: #86C6F4;
+    --gradient-end: #B4E0FC;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', sans-serif;
+    overflow-x: hidden;
+    background: var(--bg-light);
+}
+
+/* 背景装饰 */
+.decorations {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.clouds {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('images/clouds.png') repeat-x;
+    background-size: auto 100%;
+    animation: cloudMove 60s linear infinite;
+    opacity: 0.8;
+}
+
+.birds {
+    position: absolute;
+    top: 20%;
+    right: -100px;
+    width: 120px;
+    height: 60px;
+    background: url('images/birds.png') no-repeat;
+    background-size: contain;
+    animation: birdsFly 20s linear infinite;
+}
+
+.balloon {
+    position: absolute;
+    top: 30%;
+    left: -100px;
+    width: 100px;
+    height: 140px;
+    background: url('images/balloon.png') no-repeat;
+    background-size: contain;
+    animation: balloonFloat 30s linear infinite;
+}
+
+/* 顶部区域 */
+#top-section {
+    height: 100vh;
+    position: relative;
+    background: linear-gradient(180deg, 
+        var(--gradient-start) 0%, 
+        var(--gradient-middle) 40%,
+        var(--gradient-end) 100%);
+    overflow: hidden;
+    z-index: 2;
+    min-height: 100vh;
+    padding-top: 60px;
+}
+
+#top-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 20%, 
+            rgba(255,255,255,0.2) 0%,
+            transparent 50%),
+        radial-gradient(circle at 80% 80%, 
+            rgba(255,255,255,0.2) 0%,
+            transparent 50%);
+    animation: gradientMove 20s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.earth-container {
+    position: relative;
+    height: calc(100vh - 60px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin-top: 60px;
+}
+
+.earth {
+    width: 550px;
+    height: 550px;
+    background: url('images/earth') no-repeat center;
+    background-size: contain;
+    animation: rotate 40s linear infinite;
+    opacity: 0.95;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 0 40px rgba(255,255,255,0.4));
+}
+
+.landmark {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background: url('sucai/landmark-marker.png') no-repeat;
+    background-size: contain;
+    cursor: pointer;
+    transition: transform 0.3s;
+    animation: markerPulse 2s ease-in-out infinite;
+}
+
+.landmark:hover {
+    transform: scale(1.2);
+}
+
+.landmark::after {
+    content: attr(data-name);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.landmark:hover::after {
+    opacity: 1;
+}
+
+.achi-character {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform-style: preserve-3d;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+}
+
+.achi {
+    width: 280px;
+    height: auto;
+    filter: drop-shadow(0 5px 20px rgba(0,0,0,0.15));
+    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transform-origin: center bottom;
+    animation: floatKiki 4s ease-in-out infinite;
+    background: url('images/cartoon-snow-leopard') no-repeat;
+    background-size: contain;
+}
+
+@keyframes floatKiki {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-12px) rotate(2deg);
+    }
+}
+
+.achi:hover {
+    transform: scale(1.1) translateY(-10px);
+    filter: drop-shadow(0 8px 25px rgba(0,0,0,0.25));
+}
+
+.adventure-map {
+    position: absolute;
+    width: 120px;
+    height: auto;
+    right: -40px;
+    bottom: 40px;
+    transform: rotate(15deg);
+    z-index: 1;
+    transition: transform 0.3s ease;
+    background: url('sucai/map.png') no-repeat;
+    background-size: contain;
+}
+
+.adventure-map:hover {
+    transform: rotate(5deg) scale(1.1);
+}
+
+.speech-bubble {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+    padding: 20px 25px;
+    min-width: 300px;
+    transform: translateX(-50%) translateY(0);
+    transition: all 0.3s ease;
+    top: -100px;
+    left: 50%;
+    z-index: 3;
+}
+
+.achi-character:hover .speech-bubble {
+    opacity: 0.7;
+}
+
+.title-container {
+    text-align: center;
+    position: relative;
+    z-index: 3;
+}
+
+.main-title {
+    font-size: 4em;
+    color: white;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    position: relative;
+    animation: titleFloat 3s ease-in-out infinite;
+    background: linear-gradient(120deg, #ffffff 0%, #f0f0f0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sparkle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: url('assets/sparkle.png') no-repeat;
+    background-size: contain;
+    animation: sparkleRotate 2s linear infinite;
+}
+
+.sub-title {
+    font-size: 1.5em;
+    margin-top: 15px;
+    background: linear-gradient(90deg, 
+        #FFB6C1 0%, 
+        #87CEEB 50%, 
+        #FFB6C1 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientText 3s linear infinite;
+}
+
+/* 动画 */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes cloudMove {
+    from { background-position: 0 0; }
+    to { background-position: 100% 0; }
+}
+
+@keyframes birdsFly {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(100vw + 100px)); }
+}
+
+@keyframes balloonFloat {
+    from { transform: translate(0, 0); }
+    to { transform: translate(calc(100vw + 100px), -100px); }
+}
+
+@keyframes sparkleRotate {
+    from { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    to { transform: rotate(360deg) scale(1); }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .earth {
+        width: 400px;
+        height: 400px;
+        opacity: 0.85;
+    }
+
+    .main-title {
+        font-size: 3em;
+    }
+
+    .sub-title {
+        font-size: 1.2em;
+    }
+
+    .achi {
+        width: 220px;
+    }
+
+    .speech-bubble {
+        max-width: 240px;
+        padding: 12px 16px;
+    }
+}
+
+/* 中间区域 */
+#middle-section {
+    background: linear-gradient(180deg, 
+        var(--gradient-end) 0%,
+        #FFFFFF 100%);
+    padding: 60px 20px;
+}
+
+.chat-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    padding: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.adventure-journal {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.chat-messages {
+    height: 300px;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.chat-input {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid rgba(74, 163, 227, 0.2);
+    border-radius: 25px;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.chat-input input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 163, 227, 0.1);
+}
+
+.send-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.send-btn:hover {
+    background: var(--gradient-middle);
+    transform: translateY(-2px);
+}
+
+.map-marker {
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.map-marker:hover {
+    transform: scale(1.1);
+}
+
+.adventure-items {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.item {
+    width: 60px;
+    height: 60px;
+    padding: 10px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.item:hover {
+    transform: translateY(-5px) rotate(15deg);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* AR展示区域 */
+.ar-gallery {
+    padding: 60px 20px;
+    background: linear-gradient(180deg, 
+        var(--gradient-end) 0%,
+        #FFFFFF 100%);
+}
+
+.gallery-title {
+    text-align: center;
+    font-size: 2.5em;
+    color: var(--text-dark);
+    margin-bottom: 40px;
+}
+
+.gallery-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.ar-card {
+    position: relative;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.ar-card:hover {
+    transform: translateY(-10px);
+}
+
+.location-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.qr-placeholder {
+    width: 120px;
+    height: 120px;
+    margin: 15px auto;
+    background: rgba(0,0,0,0.05);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9em;
+    color: #999;
+    display: none; /* 暂时隐藏 */
+}
+
+/* 当需要显示二维码时，可以添加这个类 */
+.qr-placeholder.show {
+    display: flex;
+}
+
+.ar-card h3 {
+    color: var(--text-dark);
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
+
+.ar-card p {
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.ar-card .facts {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.ar-card .facts li {
+    padding: 5px 0;
+    color: #555;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+}
+
+.ar-card .facts li::before {
+    content: '•';
+    color: var(--primary-color);
+    margin-right: 8px;
+}
+
+.scan-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    font-size: 1em;
+}
+
+.scan-btn:hover {
+    background: var(--gradient-middle);
+    transform: translateY(-2px);
+}
+
+/* 底部区域 */
+#bottom-section {
+    min-height: 300px;
+    background: var(--bg-dark);
+    position: relative;
+    padding: 40px 0 0 0;
+}
+
+.night-sky {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url('assets/stars.png') repeat;
+    animation: twinkle 4s linear infinite;
+}
+
+.moon {
+    position: absolute;
+    top: 50px;
+    right: 50px;
+    width: 100px;
+    height: 100px;
+    background: url('assets/moon.png') no-repeat;
+    background-size: contain;
+    filter: drop-shadow(0 0 20px rgba(255,255,255,0.5));
+}
+
+.social-links {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 40px;
+}
+
+.social-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--text-color);
+    font-size: 0;
+    transition: transform 0.3s;
+}
+
+.social-icon:hover {
+    transform: scale(1.2);
+}
+
+.social-icon::before {
+    font-size: 24px;
+}
+
+.wechat::before { content: '微信'; }
+.douyin::before { content: '抖音'; }
+.instagram::before { content: 'Ins'; }
+
+.copyright {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+    padding: 20px;
+    background: rgba(0,0,0,0.5);
+}
+
+/* 额外动画 */
+@keyframes twinkle {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+/* 响应式补充 */
+@media (max-width: 768px) {
+    .chat-container {
+        flex-direction: column;
+    }
+
+    .adventure-items {
+        position: static;
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .ar-card {
+        min-width: 250px;
+    }
+
+    .social-links {
+        flex-wrap: wrap;
+    }
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    padding: 0 20px;
+}
+
+.footer-column {
+    color: white;
+}
+
+.footer-column h4 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: var(--secondary-color);
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-column li {
+    margin-bottom: 10px;
+}
+
+.footer-column a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-column a:hover {
+    color: var(--secondary-color);
+}
+
+.footer-bottom {
+    margin-top: 40px;
+    padding: 20px;
+    background: rgba(0,0,0,0.3);
+    text-align: center;
+    color: #fff;
+}
+
+/* 添加卡通风格的动画 */
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1) rotate(5deg); }
+}
+
+/* 添加光晕效果 */
+.achi::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -20%;
+    width: 140%;
+    height: 140%;
+    background: radial-gradient(circle, 
+        rgba(255,255,255,0.3) 0%,
+        rgba(255,255,255,0.1) 30%,
+        transparent 70%);
+    z-index: -1;
+    pointer-events: none;
+    animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+/* 添加背景光效 */
+.earth::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -20%;
+    width: 140%;
+    height: 140%;
+    background: radial-gradient(circle, 
+        rgba(135, 206, 235, 0.2) 0%,
+        rgba(255, 255, 255, 0.1) 30%,
+        transparent 70%);
+    z-index: -1;
+}
+
+/* 添加云彩装饰 */
+.cloud-decoration {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    opacity: 0.9;
+    mix-blend-mode: soft-light;
+}
+
+.cloud-1, .cloud-2, .cloud-3 {
+    position: absolute;
+    background: url('sucai/cloud.png') no-repeat;
+    background-size: contain;
+    filter: blur(1px);
+    transition: all 0.8s ease;
+}
+
+.cloud-1 {
+    width: 200px;
+    height: 100px;
+    top: 15%;
+    animation: 
+        floatCloud1 60s linear infinite,
+        cloudFade 8s ease-in-out infinite;
+}
+
+.cloud-2 {
+    width: 150px;
+    height: 75px;
+    top: 35%;
+    animation: 
+        floatCloud2 45s linear infinite reverse,
+        cloudFade 6s ease-in-out infinite;
+    opacity: 0.7;
+}
+
+.cloud-3 {
+    width: 180px;
+    height: 90px;
+    top: 55%;
+    animation: 
+        floatCloud3 50s linear infinite,
+        cloudFade 10s ease-in-out infinite;
+    opacity: 0.6;
+}
+
+@keyframes floatCloud1 {
+    0% {
+        transform: translateX(-100%) translateY(0);
+    }
+    50% {
+        transform: translateX(50vw) translateY(-20px);
+    }
+    100% {
+        transform: translateX(100vw) translateY(0);
+    }
+}
+
+@keyframes floatCloud2 {
+    0% {
+        transform: translateX(-100%) translateY(0) scale(0.9);
+    }
+    50% {
+        transform: translateX(50vw) translateY(20px) scale(1.1);
+    }
+    100% {
+        transform: translateX(100vw) translateY(0) scale(0.9);
+    }
+}
+
+@keyframes floatCloud3 {
+    0% {
+        transform: translateX(-100%) translateY(0) rotate(-2deg);
+    }
+    50% {
+        transform: translateX(50vw) translateY(-15px) rotate(2deg);
+    }
+    100% {
+        transform: translateX(100vw) translateY(0) rotate(-2deg);
+    }
+}
+
+@keyframes cloudFade {
+    0%, 100% {
+        opacity: 0.7;
+        filter: blur(1px);
+    }
+    50% {
+        opacity: 0.9;
+        filter: blur(0.5px);
+    }
+}
+
+/* 优化滚动引导按钮 */
+.scroll-guide {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+}
+
+.cloud-button {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: buttonPulse 2s ease-in-out infinite;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+@keyframes buttonPulse {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+}
+
+.arrow-down {
+    width: 20px;
+    height: 20px;
+    border-right: 3px solid var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    transform: rotate(45deg);
+    margin: 10px auto 0;
+    animation: arrowBounce 2s infinite;
+}
+
+@keyframes arrowBounce {
+    0%, 100% {
+        transform: rotate(45deg) translate(0, 0);
+    }
+    50% {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+}
+
+/* 优化光晕效果 */
+.achi::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, 
+        rgba(255,255,255,0.8) 0%,
+        rgba(255,255,255,0) 70%);
+    mix-blend-mode: overlay;
+    animation: glowRotate 10s linear infinite;
+}
+
+@keyframes glowRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.typing-text {
+    color: var(--text-dark);
+    font-size: 1.1em;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.typing-text:last-child {
+    margin-bottom: 0;
+}
+
+.typing-text.delayed {
+    animation-delay: 2.5s;
+}
+
+.typing-text.delayed-2 {
+    animation-delay: 5s;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+        opacity: 1;
+    }
+    to {
+        width: 100%;
+        opacity: 1;
+    }
+}
+
+.cloud-1:hover, .cloud-2:hover, .cloud-3:hover {
+    filter: blur(0);
+    transform: scale(1.1);
+}
+
+/* 优化标题动画效果 */
+@keyframes titleFloat {
+    0%, 100% {
+        transform: translateY(0) rotate(-1deg);
+    }
+    50% {
+        transform: translateY(-10px) rotate(1deg);
+    }
+}
+
+/* 优化副标题效果 */
+@keyframes gradientText {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+/* 优化地球旋转效果 */
+@keyframes earthPulse {
+    0%, 100% {
+        filter: drop-shadow(0 0 30px rgba(255,255,255,0.4));
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        filter: drop-shadow(0 0 40px rgba(255,255,255,0.6));
+        transform: scale(1.02) rotate(180deg);
+    }
+}
+
+/* 优化地标标注动画 */
+@keyframes markerPulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    50% {
+        transform: scale(1.1);
+        filter: brightness(1.2);
+    }
+}
+
+/* 优化雪豹动画效果 */
+@keyframes breathe {
+    0%, 100% {
+        filter: brightness(1) contrast(1);
+    }
+    50% {
+        filter: brightness(1.1) contrast(1.05);
+    }
+}
+
+/* 优化云彩动画 */
+.cloud-1 {
+    animation: 
+        floatCloud 30s linear infinite,
+        cloudFade 8s ease-in-out infinite;
+}
+
+.cloud-2 {
+    animation: 
+        floatCloud 25s linear infinite reverse,
+        cloudFade 6s ease-in-out infinite;
+}
+
+.cloud-3 {
+    animation: 
+        floatCloud 35s linear infinite,
+        cloudFade 10s ease-in-out infinite;
+}
+
+@keyframes cloudFade {
+    0%, 100% {
+        opacity: 0.6;
+        transform: translateX(-100%) translateY(0);
+    }
+    50% {
+        opacity: 0.9;
+        transform: translateX(-50%) translateY(-15px);
+    }
+}
+
+/* 优化滚动引导按钮 */
+.scroll-guide {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+}
+
+.cloud-button {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: buttonPulse 2s ease-in-out infinite;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+@keyframes buttonPulse {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+}
+
+.arrow-down {
+    width: 20px;
+    height: 20px;
+    border-right: 3px solid var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    transform: rotate(45deg);
+    margin: 10px auto 0;
+    animation: arrowBounce 2s infinite;
+}
+
+@keyframes arrowBounce {
+    0%, 100% {
+        transform: rotate(45deg) translate(0, 0);
+    }
+    50% {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+}
+
+/* 优化光晕效果 */
+.achi::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, 
+        rgba(255,255,255,0.8) 0%,
+        rgba(255,255,255,0) 70%);
+    mix-blend-mode: overlay;
+    animation: glowRotate 10s linear infinite;
+}
+
+@keyframes glowRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.typing-text {
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0;
+    opacity: 0;
+    animation: typing 2s steps(40, end) forwards;
+}
+
+.typing-text.delayed {
+    animation-delay: 2s;
+}
+
+/* 顶部导航栏 */
+.top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #FFF 30%, #E0F7FF 70%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* 优化雪豹动画 */
+@keyframes floatKiki {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-12px) rotate(2deg);
+    }
+}
+
+/* 优化云彩动画 */
+@keyframes cloudFloat {
+    0% {
+        transform: translateX(-100%) translateY(0);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateX(0) translateY(-10px);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateX(100%) translateY(0);
+        opacity: 0.6;
+    }
+}
+
+/* 添加光晕效果 */
+.earth::after {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, 
+        rgba(255,255,255,0.2) 0%,
+        transparent 70%);
+    animation: glowPulse 3s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+    .earth {
+        width: 400px;
+        height: 400px;
+    }
+
+    .achi {
+        width: 220px;
+    }
+
+    .speech-bubble {
+        min-width: 260px;
+        padding: 15px 20px;
+    }
+
+    .logo {
+        font-size: 1.6rem;
+    }
+
+    .nav-links {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .earth {
+        width: 300px;
+        height: 300px;
+    }
+
+    .achi {
+        width: 180px;
+    }
+
+    .speech-bubble {
+        min-width: 220px;
+        padding: 12px 16px;
+    }
+}
+
+.message {
+    margin: 10px 0;
+    padding: 12px 18px;
+    border-radius: 15px;
+    max-width: 80%;
+    animation: messageAppear 0.3s ease-out;
+}
+
+.user-message {
+    background: var(--primary-color);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+}
+
+.achi-message {
+    background: #F0F2F5;
+    color: var(--text-dark);
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+}
+
+@keyframes messageAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 自定义滚动条 */
+.chat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.05);
+    border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(74, 163, 227, 0.3);
+    border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(74, 163, 227, 0.5);
+}
+
+@media (max-width: 768px) {
+    .chat-container {
+        padding: 15px;
+    }
+
+    .adventure-items {
+        gap: 15px;
+    }
+
+    .item {
+        width: 50px;
+        height: 50px;
+    }
+
+    .chat-input {
+        padding: 10px;
+    }
+
+    .chat-input input {
+        padding: 10px 15px;
+    }
+
+    .send-btn {
+        padding: 10px 20px;
+    }
+}
+
+/* 调整图片尺寸和效果 */
+.earth {
+    width: 550px;
+    height: 550px;
+    background: url('images/earth') no-repeat center;
+    background-size: contain;
+    filter: drop-shadow(0 0 40px rgba(255,255,255,0.4));
+}
+
+.achi {
+    width: 280px;
+    height: auto;
+    filter: drop-shadow(0 5px 20px rgba(0,0,0,0.15));
+}
+
+.landmark-marker {
+    width: 24px;
+    height: 24px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.ar-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0;
+}
+
+.item {
+    width: 60px;
+    height: 60px;
+    padding: 10px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+/* 探险道具样式 */
+.item.compass {
+    background: url('images/compass') no-repeat center;
+    background-size: 70%;
+}
+
+.item.backpack {
+    background: url('images/backpack') no-repeat center;
+    background-size: 70%;
+}
+
+.item.magnifier {
+    background: url('images/magnifie') no-repeat center;
+    background-size: 70%;
+}
+
+/* 森林背景 */
+.forest-background {
+    background: url('images/forest-bg') no-repeat center;
+    background-size: cover;
+}
+
+/* 日志背景 */
+.adventure-journal {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.message.loading {
+    position: relative;
+    padding-right: 40px;
+}
+
+.message.loading::after {
+    content: '';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    border-right-color: transparent;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+ 
